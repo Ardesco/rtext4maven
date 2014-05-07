@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.fifesoft</groupId>
+		<artifactId>rtext-root-pom</artifactId>
+		<version>3</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>rstaui</artifactId>
+	<version>@VERSION@</version>
+	<packaging>jar</packaging>
+	<name>RSyntaxTextArea UI</name>
+	<description>
+		RSTAUI is an add-on library for RSyntaxTextArea that provides pre-built dialog boxes commonly 
+		needed in text editing applications.
+  	</description>
+	<inceptionYear>2003</inceptionYear>
+	<url>http://www.fifesoft.com/rsyntaxtextarea/</url>
+	<licenses>
+		<license>
+			<name>Modified BSD License</name>
+			<url>http://fifesoft.com/rsyntaxtextarea/RSyntaxTextArea.License.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>http://svn.fifesoft.com/viewvc-1.0.5/bin/cgi/viewvc.cgi/RSTAUI/trunk/?root=RSyntaxTextArea</url>
+		<connection>http://svn.fifesoft.com/svn/RSyntaxTextArea/RSTAUI</connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Robert Futrell</name>
+			<url>http://www.fifesoft.com</url>
+		</developer>
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fifesoft</groupId>
+			<artifactId>rsyntaxtextarea</artifactId>
+			<version>@RSYNTAXTEXTAREAVERSION@</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fifesoft</groupId>
+			<artifactId>autocomplete</artifactId>
+			<version>@AUTOCOMPLETEVERSION@</version>
+		</dependency>			
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler-plugin-version}</version>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<configuration>
+							<fork>true</fork>
+							<executable>${javac15-compiler-executable}</executable>
+							<compilerVersion>1.5</compilerVersion>
+							<source>1.5</source>
+							<target>1.5</target>
+						</configuration>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+

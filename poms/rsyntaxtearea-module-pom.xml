@@ -1,0 +1,46 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent> 
+		<groupId>com.fifesoft</groupId> 
+		<artifactId>rtext-root-pom</artifactId> 
+		<version>3</version> 
+	</parent> 
+
+	<groupId>com.fifesoft</groupId>
+	<artifactId>rsyntaxtextarea-modules</artifactId>
+	<version>3</version>
+	<packaging>pom</packaging>
+	<name>RSyntaxTextArea Modules</name>
+	<description>This module pom organizes the RSyntaxTextArea project modules</description>
+	<inceptionYear>2003</inceptionYear>
+	<url>http://www.fifesoft.com/rsyntaxtextarea/</url>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>http://svn.fifesoft.com/viewvc-1.0.5/bin/cgi/viewvc.cgi/RSyntaxTextArea/?root=RSyntaxTextArea</url>
+		<connection>http://svn.fifesoft.com/svn/RSyntaxTextArea/RSyntaxTextArea/</connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Robert Futrell</name>
+			<url>http://www.fifesoft.com</url>
+		</developer>
+	</developers>
+	<modules>
+		<module>rsyntaxtextarea</module>
+		<module>autocomplete</module>
+		<module>spellchecker</module>
+		<module>languagesupport</module>
+		<module>rstaui</module>
+	</modules>
+</project>
+

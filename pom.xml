@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<groupId>net.sf.rtext4maven</groupId>
+	<artifactId>rtext4maven</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>RText4Maven</name>
+	<description>
+		A project which is used to mavenize the rtext editor project from source.  This will build 
+		the project hierarchy starting in the output folder</description>
+	<inceptionYear>2011</inceptionYear>
+	<url></url>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url></url>
+		<connection></connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Rob Manning</name>
+			<url></url>
+		</developer>
+	</developers>
+	<properties>
+		<!-- Maven plugin versions -->
+		<compiler-plugin-version>2.3.2</compiler-plugin-version>
+		<gpg-plugin-version>1.1</gpg-plugin-version>
+		<jar-plugin-version>2.3.1</jar-plugin-version>
+
+
+		<!-- Third-party dependency versions -->
+		<junit-version>3.8.2</junit-version>
+	</properties>
+
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>mavenize-rtext-tree</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>/bin/bash</executable>
+							<arguments>
+								<argument>target/classes/bin/mavenize.sh</argument>
+							</arguments>
+							<environmentVariables>
+								<GPGPASSPHRASE>${gpg.passphrase}</GPGPASSPHRASE>
+							</environmentVariables>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+
+
+</project>
+

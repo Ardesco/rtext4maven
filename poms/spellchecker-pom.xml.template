@@ -1,0 +1,56 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent> 
+		<groupId>com.fifesoft</groupId> 
+		<artifactId>rtext-root-pom</artifactId> 
+		<version>3</version> 
+		<relativePath>../../pom.xml</relativePath> 
+	</parent> 
+
+	<groupId>com.fifesoft</groupId>
+	<artifactId>spellchecker</artifactId>
+	<version>@VERSION@</version>
+	<packaging>jar</packaging>
+	<name>SpellChecker</name>
+	<description>  
+		A simple spell checker add-on for RSyntaxTextArea. It’ll spell-check comments in source code, or the 
+		entire file if you are editing plain text.  Spelling errors are squiggle-underlined with the color 
+		of your choice, and tooltips are available offering any spelling suggestions.
+  	</description>
+	<inceptionYear>2003</inceptionYear>
+	<url>http://www.fifesoft.com/rsyntaxtextarea/</url>
+	<licenses>
+		<license>
+			<name>Modified BSD License</name>
+			<url>http://fifesoft.com/rsyntaxtextarea/RSyntaxTextArea.License.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>http://svn.fifesoft.com/viewvc-1.0.5/bin/cgi/viewvc.cgi/SpellChecker/?root=RSyntaxTextArea</url>
+		<connection>http://svn.fifesoft.com/svn/RSyntaxTextArea/SpellChecker</connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>Robert Futrell</name>
+			<url>http://www.fifesoft.com</url>
+		</developer>
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>com.fifesoft</groupId>
+			<artifactId>rsyntaxtextarea</artifactId>
+			<version>@RSYNTAXTEXTAREAVERSION@</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fifesoft</groupId>
+			<artifactId>rstaui</artifactId>
+			<version>@RSTAUIVERSION@</version>
+		</dependency>			
+	</dependencies>
+</project>
+
