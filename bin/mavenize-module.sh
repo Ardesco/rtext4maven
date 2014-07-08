@@ -58,8 +58,7 @@ function replaceVersionPlaceHolder {
 	#echo "foundPlaceHolderVersion: $foundPlaceHolderVersion"
 	if [ "$foundPlaceHolderVersion" -gt "0" ]; then
 		#read -p "What value for the $placeHolderPattern dependency version should be used? " placeHolderVersion
-		echo "Using $placeHolderVersion as the value for the $placeHolderPattern"
-		perl -pi -e "s/\@$placeHolderPattern\@/$placeHolderVersion/" pom.xml
+		sed -i "" "s/@${placeHolderPattern}@/${placeHolderVersion}/" pom.xml
 	fi
 }
 
@@ -72,7 +71,7 @@ curDirName=`basename $curDirPath`
 rm -rf ${artifactFilename}.tmp
 mkdir ${artifactFilename}.tmp
 cp ${_sourceFolder} ${artifactFilename}.tmp/${artifactFilename}
-pushd ${artifactFilename}.tmp
+pushd ${artifactFilename}.tmp > /dev/null
 unzip -q ${artifactFilename}
 if [ "$?" -ne "0" ]; then
     echo "Unzip failed to extract archive: $_sourceFolder"
@@ -96,10 +95,9 @@ if [ "$isRtextArtifact" -eq 1 ]; then
         rmdir Common
     fi
 fi
-popd
+popd > /dev/null
 _sourceFolder=${artifactFilename}.tmp
-
-perl -pi -e "s/\@VERSION\@/$_sourceVersion/" pom.xml
+sed -i "" "s/@VERSION@/${_sourceVersion}/" pom.xml
 
 replaceVersionPlaceHolder "RSYNTAXTEXTAREAVERSION" $RSYNTAXTEXTAREA_VERSION
 replaceVersionPlaceHolder "SPELLCHECKERVERSION" $SPELLCHECKER_VERSION
@@ -118,9 +116,9 @@ mkdir -p "$mainResourcesFolder"
 # Copy main classes and resources
 cp -r "$_sourceFolder/src/org" "$mainJavaFolder"
 cp -r "$_sourceFolder/src/org" "$mainResourcesFolder"
-find "$mainJavaFolder" -type f | grep -v "\.java" | xargs -i rm {}
-find "$mainResourcesFolder" -type f -name "*.java" | xargs -i rm {}
-find "$mainResourcesFolder" -type f -name "*.flex" | xargs -i rm {}
+find "$mainJavaFolder" -type f -not -name "*.java" -delete
+find "$mainResourcesFolder" -type f -name "*.java" -delete
+find "$mainResourcesFolder" -type f -name "*.flex" -delete
 
 # For rtext-common, there is an interface in the com package that is 
 # required to compile the source
@@ -157,8 +155,8 @@ if [ -d "$_sourceFolder/test" ]; then
 	mkdir -p "$testResourcesFolder"
 	cp -r "$_sourceFolder/test/org" "$testJavaFolder"
 	cp -r "$_sourceFolder/test/org" "$testResourcesFolder"
-	find "$testJavaFolder" -type f | grep -v "\.java" | xargs -i rm {}
-	find "$testResourcesFolder" -type f -name "*.java" | xargs -i rm {}
+	find "$testJavaFolder" -type f | grep -v "\.java" -delete
+	find "$testResourcesFolder" -type f -name "*.java" -delete
 fi
 
 # Now copy in any test resources if a res/test folder exists (in particular, this is need for languagesupport module
@@ -169,7 +167,7 @@ fi
 
 # This is a hack to fix a test in the languagesupport module
 if [ -f "./src/test/java/org/fife/rsta/ac/java/rjc/parser/ClassAndLocalVariablesTest.java" ]; then
-	perl -pi -e 's/res\/tests\/SimpleClass\.java/src\/test\/resources\/res\/tests\/SimpleClass.java/' "./src/test/java/org/fife/rsta/ac/java/rjc/parser/ClassAndLocalVariablesTest.java";
+	sed -i "" "s!res/tests/SimpleClass.java!src/test/resources/res/tests/SimpleClass.java!" "./src/test/java/org/fife/rsta/ac/java/rjc/parser/ClassAndLocalVariablesTest.java"
 fi
 
 # language support requires some xml files from the "data" directory.
