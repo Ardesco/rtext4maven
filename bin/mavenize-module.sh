@@ -33,12 +33,7 @@ do
     esac
 done
 
-if [ "" == "$_sourceVersion" ]; then
-	usage
-	exit 1
-fi
-
-if [ "" == "$_sourceVersion" ] || [ ! -f "$_sourceFolder" ]; then
+if [ "" == "$_sourceVersion" ] && ([ ! -f "$_sourceFolder" ] || [ ! -d "$_sourceFolder" ]); then
  	usage
 	exit 1
 fi
@@ -62,41 +57,44 @@ function replaceVersionPlaceHolder {
 	fi
 }
 
-# We have a source artifact instead of a source folder.  So we need to extract it into a tmp
-# directory and assign the sourceFolder variable to that tmp directory.
-artifactFilename=`basename ${_sourceFolder}`
-curDirPath=`pwd`;
-curDirName=`basename $curDirPath`
+if [ -f "$sourceFolder" ]; then
+    # We have a source artifact instead of a source folder.  So we need to extract it into a tmp
+    # directory and assign the sourceFolder variable to that tmp directory.
+    artifactFilename=`basename ${_sourceFolder}`
+    curDirPath=`pwd`;
+    curDirName=`basename $curDirPath`
 
-rm -rf ${artifactFilename}.tmp
-mkdir ${artifactFilename}.tmp
-cp ${_sourceFolder} ${artifactFilename}.tmp/${artifactFilename}
-pushd ${artifactFilename}.tmp > /dev/null
-unzip -q ${artifactFilename}
-if [ "$?" -ne "0" ]; then
-    echo "Unzip failed to extract archive: $_sourceFolder"
-    exit 1
-fi
-
-# Since rtext source zip ships both RText source and Common source trees, detect this and remove
-# the irrelevant source tree.
-isRtextArtifact=`echo "$artifactFilename" | egrep "^rtext_.*_Source\.zip" | wc -l`
-if [ "$isRtextArtifact" -eq 1 ]; then
-
-    if [ "$curDirName" == "rtext" ]; then
-        echo "Removing common artifact source files (keeping RText source files)"
-        rm -rf Common
-        mv RText/* .
-        rmdir RText
-    else
-        echo "Removing rtext artifact source files (keeping Common source files)"
-        rm -rf RText
-        mv Common/* .
-        rmdir Common
+    rm -rf ${artifactFilename}.tmp
+    mkdir ${artifactFilename}.tmp
+    cp ${_sourceFolder} ${artifactFilename}.tmp/${artifactFilename}
+    pushd ${artifactFilename}.tmp > /dev/null
+    unzip -q ${artifactFilename}
+    if [ "$?" -ne "0" ]; then
+        echo "Unzip failed to extract archive: $_sourceFolder"
+        exit 1
     fi
+
+    # Since rtext source zip ships both RText source and Common source trees, detect this and remove
+    # the irrelevant source tree.
+    isRtextArtifact=`echo "$artifactFilename" | egrep "^rtext_.*_Source\.zip" | wc -l`
+    if [ "$isRtextArtifact" -eq 1 ]; then
+
+        if [ "$curDirName" == "rtext" ]; then
+            echo "Removing common artifact source files (keeping RText source files)"
+            rm -rf Common
+            mv RText/* .
+            rmdir RText
+        else
+            echo "Removing rtext artifact source files (keeping Common source files)"
+            rm -rf RText
+            mv Common/* .
+            rmdir Common
+        fi
+    fi
+    popd > /dev/null
+    _sourceFolder=${artifactFilename}.tmp
 fi
-popd > /dev/null
-_sourceFolder=${artifactFilename}.tmp
+
 sed -i "" "s/@VERSION@/${_sourceVersion}/" pom.xml
 
 replaceVersionPlaceHolder "RSYNTAXTEXTAREAVERSION" $RSYNTAXTEXTAREA_VERSION
