@@ -27,30 +27,17 @@
 # Where most importantly, you will need to have a working 1.4 compiler executable specified as the value for javac14-compiler-executable 
 #
 
-#TODO offer option to set this via command line or env variable
-if [ "" == "$GPGPASSPHRASE" ]; then
-	echo "Environment variable GPGPASSPHRASE must be defined"
-	exit 1
-fi
 
-#TODO read these in from command line
-export RSYNTAXTEXTAREA_VERSION=2.5.1
-export AUTOCOMPLETE_VERSION=2.5.1
-export SPELLCHECKER_VERSION=2.5.1
-export RSTA_UI_VERSION=2.5.1
-export RTEXT_VERSION=2.0.7
-export RTEXTCOMMON_VERSION=2.0.7
-#
-#
-# The LaungageSupport module is the only module that is not released by the RSyntaxTextArea developers.  
-# In order to decide which commit revision id to use, you must look at the 
+
+# The LaungageSupport module is the only module that is not released by the RSyntaxTextArea developers.
+# In order to decide which commit revision id to use, you must look at the
 # release dates on the downstream dependencies (rtext and rtext-common).  Pick the git revision that was
 # the closest without going beyond the earliest release data of these two modules (Alternatively, when
 # RText is not released at the same time as RSyntaxTextArea, use the release date of RSyntaxTextArea.
 # The git repo for the languagesupport project is found here:
 #
 # https://github.com/bobbylight/RSTALanguageSupport
-# 
+#
 # So, do this to see the log so you can determine which commit revision to use:
 #
 # git clone https://github.com/bobbylight/RSTALanguageSupport .
@@ -58,16 +45,75 @@ export RTEXTCOMMON_VERSION=2.0.7
 # git log
 #
 # Use the git commit id found by the description above for the value of GITCOMMITID below
-# 
+#
 # Since the git commit id is a random hash, it would be impossible for users to know which commit id
-# represents a later revision.  So, for LANGUAGESUPPORT_VERSION, use the same version as 
+# represents a later revision.  So, for LANGUAGESUPPORT_VERSION, use the same version as
 # RSYNTAXTEXTAREA_VERSION
 #
-#
-#TODO read this in via command line
 export GITCOMMITID=738d8cba6a9120313394e3531fd686f8600abd06
-export LANGUAGESUPPORT_VERSION=$RSYNTAXTEXTAREA_VERSION
+#TODO read these in from command line
+export RSYNTAXTEXTAREA_VERSION=2.5.1
+export AUTOCOMPLETE_VERSION=2.5.1
+export SPELLCHECKER_VERSION=2.5.1
+export RSTA_UI_VERSION=2.5.1
+export RTEXT_VERSION=2.0.7
+export RTEXTCOMMON_VERSION=2.0.7
+export LANGUAGESUPPORT_VERSION=2.5.1
 
+
+function usage(){
+    echo -e "\nYou must specify a git revision e.g. './`basename $0` -r=8324c615b702e5dab0b3979a4fb3639a7c17bbdb'"
+    echo -e "\n*** Available Parameters ***\n"
+    echo -e "--rsyntaxarea \t\t\t set the rsyntaxarea version"
+    echo -e "--autocomplete \t\t\t set the autocomplete version"
+    echo -e "--spellchecker \t\t\t set the spellchecker version"
+    echo -e "--rstaui \t\t\t set the rsta_ui version"
+    echo -e "--rtext \t\t\t set the rtext version"
+    echo -e "--rtextcommon \t\t\t set the rtextcommon version"
+    echo -e "--languagesupport \t\t\t set the rsta language support version"
+    echo -e "--gpgpassphrase \t\t\t set the gpgpassphrase used to sign the packages that are created\n"
+    echo -e "-h | --help \t\t\t Show this help!"
+    exit 1
+}
+
+for _argument in "$@"
+do
+    case ${_argument} in
+        --rsyntaxarea=*)
+        RSYNTAXTEXTAREA_VERSION="${_argument#*=}"
+        ;;
+        --autocomplete=*)
+        AUTOCOMPLETE_VERSION="${_argument#*=}"
+        ;;
+        --spellchecker=*)
+        SPELLCHECKER_VERSION="${_argument#*=}"
+        ;;
+        --rstaui=*)
+        RSTA_UI_VERSION="${_argument#*=}"
+        ;;
+        --rtext=*)
+        RTEXT_VERSION="${_argument#*=}"
+        ;;
+        --rtextcommon=*)
+        RTEXTCOMMON_VERSION="${_argument#*=}"
+        ;;
+        --languagesupport=*)
+        LANGUAGESUPPORT_VERSION="${_argument#*=}"
+        ;;
+        --gpgpassphrase=*)
+        GPGPASSPHRASE="${_argument#*=}"
+        ;;
+        -h|--help)
+        usage
+        ;;
+    esac
+done
+
+#TODO offer option to set this via command line or env variable
+if [ "" == "$GPGPASSPHRASE" ]; then
+	echo "Environment variable GPGPASSPHRASE must be defined"
+	exit 1
+fi
 
 CURRENT_DIRECTORY=`pwd`
 SCRIPT_DIRECTORY=`dirname $0`
@@ -79,7 +125,6 @@ OFFICIAL_COMPILED_DIR=${TOP_DIR}/official-jars/compiled
 
 # This is the root directory of the mavenized RText artifacts.
 export OUTPUT_DIR=${TOP_DIR}/output
-
 export SF_PROJECT_URI_BASE=http://sourceforge.net/projects
 
 #
@@ -104,8 +149,8 @@ RSTA_UI_SOURCE_ARCHIVE=rstaui_${RSTA_UI_VERSION}_Source.zip
 RSTA_UI_COMPILE_ARCHIVE=rstaui_${RSTA_UI_VERSION}.zip
 RSTA_UI_PROJ_DIR=$RSYNTAXTEXTAREA_MODULES_DIR/rstaui
 
-# Unlike the rest of the rsyntaxtextarea modules, languagesupport isn't "officially" released.
-# So, no source or compile artifacts to download and compare against.
+LANGUAGESUPPORT_SOURCE_ARCHIVE=RSTALanguageSupport_${LANGUAGESUPPORT_VERSION}_source.zip
+LANGUAGESUPPORT_COMPILE_ARCHIVE=RSTALanguageSupport_${LANGUAGESUPPORT_VERSION}.zip
 LANGUAGESUPPORT_PROJ_DIR=$RSYNTAXTEXTAREA_MODULES_DIR/languagesupport
 
 #
@@ -244,18 +289,10 @@ downloadArchives rsyntaxtextarea $RSYNTAXTEXTAREA_VERSION $RSYNTAX_BASE $RSYNTAX
 downloadArchives autocomplete $AUTOCOMPLETE_VERSION $RSYNTAX_BASE $AUTOCOMPLETE_SOURCE_ARCHIVE $AUTOCOMPLETE_COMPILE_ARCHIVE
 downloadArchives spellchecker $SPELLCHECKER_VERSION $RSYNTAX_BASE $SPELLCHECKER_SOURCE_ARCHIVE $SPELLCHECKER_COMPILE_ARCHIVE
 downloadArchives rsta-ui $RSTA_UI_VERSION $RSYNTAX_BASE $RSTA_UI_SOURCE_ARCHIVE $RSTA_UI_COMPILE_ARCHIVE
+downloadArchives rstalanguagesupport $LANGUAGESUPPORT_VERSION $RSYNTAX_BASE $LANGUAGESUPPORT_SOURCE_ARCHIVE $LANGUAGESUPPORT_COMPILE_ARCHIVE
 
 # Both RText and Common modules are found in $RTEXT_COMPILE_ARCHIVE
 downloadArchives rtext $RTEXT_VERSION $RTEXT_BASE $RTEXT_SOURCE_ARCHIVE $RTEXT_COMPILE_ARCHIVE
-
-# languagesupport module isn't released, so we need to clone it from git.
-if [ ! -d "$OFFICIAL_SOURCE_DIR/language-support/$LANGUAGESUPPORT_VERSION" ]; then
-    mkdir -p "$OFFICIAL_SOURCE_DIR/language-support/$LANGUAGESUPPORT_VERSION"
-    /bin/bash $BIN_DIR/exportRevision.sh  -r=$GITCOMMITID -e="$OFFICIAL_SOURCE_DIR/language-support/$LANGUAGESUPPORT_VERSION"
-    if [ "$?" != 0 ]; then
-	exit 1
-    fi
-fi
 
 # run mavenize-module.sh on each module, giving it the location of the source archive
 mavenizemodule $RSYNTAXTEXTAREA_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RSYNTAXTEXTAREA_VERSION/$RSYNTAXTEXTAREA_SOURCE_ARCHIVE" $RSYNTAXTEXTAREA_VERSION
@@ -265,7 +302,6 @@ mavenizemodule $RSTA_UI_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RSTA_UI_VERSION/$RSTA_UI
 mavenizemodule $LANGUAGESUPPORT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/language-support/$LANGUAGESUPPORT_VERSION" "r${LANGUAGESUPPORT_VERSION}"
 mavenizemodule $COMMON_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXTCOMMON_VERSION/$COMMON_SOURCE_ARCHIVE" $RTEXTCOMMON_VERSION
 mavenizemodule $RTEXT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXT_VERSION/$RTEXT_SOURCE_ARCHIVE" $RTEXT_VERSION
-
 
 # build each module in dependency order and compare the maven-built jar to the official jar.
 # Fail fast if there are significant differences in any artifact.
@@ -284,10 +320,6 @@ mvn clean source:jar javadoc:jar install
 /bin/bash $BIN_DIR/prepareBundle.sh $ICONGROUPS_PROJ_DIR/target
 
 
-#TODO just tray a SHA1 comparison?
-#
-## Since LANGUAGE_SUPPORT modules is not officially released, we cannot compare it to anything.
-## TODO: Not exactly - it can be found in the RText artifact: rtext/plugins/language_support.jar
 #compj $AUTOCOMPLETE_PROJ_DIR/target/autocomplete-${AUTOCOMPLETE_VERSION}.jar $OFFICIAL_COMPILED_DIR/$AUTOCOMPLETE_VERSION/autocomplete.jar
 #compj $RSYNTAXTEXTAREA_PROJ_DIR/target/rsyntaxtextarea-${RSYNTAXTEXTAREA_VERSION}.jar  $OFFICIAL_COMPILED_DIR/$RSYNTAXTEXTAREA_VERSION/rsyntaxtextarea.jar
 #compj $SPELLCHECKER_PROJ_DIR/target/spellchecker-${SPELLCHECKER_VERSION}.jar $OFFICIAL_COMPILED_DIR/$SPELLCHECKER_VERSION/rsta_spellchecker.jar
