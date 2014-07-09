@@ -24,7 +24,12 @@ do
     esac
 done
 
-_targetFolder=$1
+if [ ! -d "$_targetFolder" ]; then
+    echo " "
+    echo "Target folder supplied is not a directory! ($_targetFolder)"
+ 	usage
+	exit 1
+fi
 
 if [ "" == "$GPGPASSPHRASE" ]; then
 	echo "Environment variable GPGPASSPHRASE must be defined"
