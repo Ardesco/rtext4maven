@@ -54,6 +54,8 @@ bundleJarName=${_bundleName}-bundle.jar
 for file in *.jar *.pom
 do
 	gpg -ab --passphrase $GPGPASSPHRASE $file
+	openssl dgst -md5 $file | sed 's/.*= //' > $file.md5
+	openssl dgst -sha1 $file | sed 's/.*= //' > $file.sha1
 done
 
 for file in *.asc
@@ -62,8 +64,10 @@ do
 	if [ "$?" != "0" ]; then
 		echo "Signature couldn't be verified."
 		exit 1
-	fi    
+	fi
+	openssl dgst -md5 $file | sed 's/.*= //' > $file.md5
+	openssl dgst -sha1 $file | sed 's/.*= //' > $file.sha1
 done
 
-jar -cvf $bundleJarName *.jar *.pom *.asc
+jar -cvf $bundleJarName *.jar *.pom *.asc *.md5 *.sha1
 popd > /dev/null
