@@ -8,6 +8,7 @@ function usage(){
     echo -e "\nYou must specify a target folder e.g. './`basename $0` -t=rSyntaxArea/target'"
     echo -e "\n*** Available Parameters ***\n"
     echo -e "-t | --targetFolder \t\t\t set folder to create a bundle from"
+    echo -e "-b | --bundleName \t\t\t the name of the -bundle.jar"
     echo -e "-h | --help \t\t\t Show this help!"
     exit 1
 }
@@ -17,6 +18,9 @@ do
     case ${_argument} in
         -t=*|--targetFolder=*)
         _targetFolder="${_argument#*=}"
+        ;;
+        -b=*|--bundleName=*)
+        _bundleName="${_argument#*=}"
         ;;
         -h|--help)
         usage
@@ -31,6 +35,11 @@ if [ ! -d "$_targetFolder" ]; then
 	exit 1
 fi
 
+if [ "" == "$_bundleName" ]; then
+	echo "The bundle name variable must be defined"
+	exit 1
+fi
+
 if [ "" == "$GPGPASSPHRASE" ]; then
 	echo "Environment variable GPGPASSPHRASE must be defined"
 	exit 1
@@ -38,8 +47,9 @@ fi
 
 pushd $_targetFolder > /dev/null
 rm -f *.asc
-#TODO work out what the hell this was reading, there is no.pom file in the targetFolder...
-bundleJarName=`ls | grep pom | sed 's/.pom//'`-bundle.jar
+
+cp ../pom.xml ${_bundleName}.pom
+bundleJarName=${_bundleName}-bundle.jar
 
 for file in *.jar *.pom
 do
