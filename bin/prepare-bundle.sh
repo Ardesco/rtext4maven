@@ -31,9 +31,10 @@ if [ "" == "$GPGPASSPHRASE" ]; then
 	exit 1
 fi
 
-pushd $_targetFolder
+pushd $_targetFolder > /dev/null
 rm -f *.asc
-bundleJarName=`ls | grep pom | perl -pi -e 's/\.pom//'`-bundle.jar
+#TODO work out what the hell this was reading, there is no.pom file in the targetFolder...
+bundleJarName=`ls | grep pom | sed 's/.pom//'`-bundle.jar
 
 for file in *.jar *.pom
 do
@@ -49,5 +50,5 @@ do
 	fi    
 done
 
-jar -cvf $bundleJarName *.jar *.pom *.asc 
-popd
+jar -cvf $bundleJarName *.jar *.pom *.asc
+popd > /dev/null

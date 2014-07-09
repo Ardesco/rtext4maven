@@ -27,31 +27,7 @@
 # Where most importantly, you will need to have a working 1.4 compiler executable specified as the value for javac14-compiler-executable 
 #
 
-
-
-# The LaungageSupport module is the only module that is not released by the RSyntaxTextArea developers.
-# In order to decide which commit revision id to use, you must look at the
-# release dates on the downstream dependencies (rtext and rtext-common).  Pick the git revision that was
-# the closest without going beyond the earliest release data of these two modules (Alternatively, when
-# RText is not released at the same time as RSyntaxTextArea, use the release date of RSyntaxTextArea.
-# The git repo for the languagesupport project is found here:
-#
-# https://github.com/bobbylight/RSTALanguageSupport
-#
-# So, do this to see the log so you can determine which commit revision to use:
-#
-# git clone https://github.com/bobbylight/RSTALanguageSupport .
-#
-# git log
-#
-# Use the git commit id found by the description above for the value of GITCOMMITID below
-#
-# Since the git commit id is a random hash, it would be impossible for users to know which commit id
-# represents a later revision.  So, for LANGUAGESUPPORT_VERSION, use the same version as
-# RSYNTAXTEXTAREA_VERSION
-#
-export GITCOMMITID=738d8cba6a9120313394e3531fd686f8600abd06
-#TODO read these in from command line
+#TODO testing purposes remove these when complete
 export RSYNTAXTEXTAREA_VERSION=2.5.1
 export AUTOCOMPLETE_VERSION=2.5.1
 export SPELLCHECKER_VERSION=2.5.1
@@ -109,11 +85,14 @@ do
     esac
 done
 
-#TODO offer option to set this via command line or env variable
 if [ "" == "$GPGPASSPHRASE" ]; then
 	echo "Environment variable GPGPASSPHRASE must be defined"
 	exit 1
 fi
+
+#TODO check that versions have been set via command line
+
+#TODO FUTURE allow release of some components and not all?
 
 CURRENT_DIRECTORY=`pwd`
 SCRIPT_DIRECTORY=`dirname $0`
@@ -189,7 +168,7 @@ function mavenizemodule() {
     echo "Mavenizing module: projDir=${projDir} sourceDirOrJar=${sourceDirOrJar} projVersion=${projVersion}"
 
     cd $projDir
-    /bin/bash $BIN_DIR/mavenize-module.sh -f=$sourceDirOrJar -v=$projVersion
+    /bin/bash $BIN_DIR/build-module.sh -f=$sourceDirOrJar -v=$projVersion
     if [ "$?" -ne "0" ]; then
         echo "Failed to mavenize module: $projDir"
         exit 1
@@ -310,14 +289,14 @@ mavenizemodule $RTEXT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXT_VERSION/$RTEXT_SOURC
 cd ${OUTPUT_DIR}
 mvn clean source:jar javadoc:jar install
 
-/bin/bash $BIN_DIR/prepareBundle.sh $RSYNTAXTEXTAREA_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $AUTOCOMPLETE_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $SPELLCHECKER_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $RSTA_UI_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $LANGUAGESUPPORT_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $COMMON_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $RTEXT_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepareBundle.sh $ICONGROUPS_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $RSYNTAXTEXTAREA_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $AUTOCOMPLETE_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $SPELLCHECKER_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $RSTA_UI_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $LANGUAGESUPPORT_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $COMMON_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $RTEXT_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh $ICONGROUPS_PROJ_DIR/target
 
 
 #compj $AUTOCOMPLETE_PROJ_DIR/target/autocomplete-${AUTOCOMPLETE_VERSION}.jar $OFFICIAL_COMPILED_DIR/$AUTOCOMPLETE_VERSION/autocomplete.jar
