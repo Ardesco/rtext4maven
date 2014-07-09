@@ -47,7 +47,7 @@
 		<junit-version>3.8.2</junit-version>
 	</properties>
 	<modules>
-<!-- 		<module>rtext-modules</module> -->
+ 		<module>rtext-modules</module>
 		<module>rsyntaxtextarea-modules</module>
 	</modules>
 
