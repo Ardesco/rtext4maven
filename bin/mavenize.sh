@@ -165,10 +165,11 @@ function mavenizemodule() {
     sourceDirOrJar=$2
     projVersion=$3
 
-    echo "Mavenizing module: projDir=${projDir} sourceDirOrJar=${sourceDirOrJar} projVersion=${projVersion}"
+    echo "Mavenizing module: `basename ${projDir}` ${projVersion}"
+    echo "build-module.sh -f=$sourceDirOrJar -v=$projVersion -o=$projDir"
+    echo " "
 
-    cd $projDir
-    /bin/bash $BIN_DIR/build-module.sh -f=$sourceDirOrJar -v=$projVersion
+    /bin/bash $BIN_DIR/build-module.sh -f=$sourceDirOrJar -v=$projVersion -o=$projDir
     if [ "$?" -ne "0" ]; then
         echo "Failed to mavenize module: $projDir"
         exit 1
@@ -282,6 +283,7 @@ mavenizemodule $LANGUAGESUPPORT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/language-support/
 mavenizemodule $COMMON_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXTCOMMON_VERSION/$COMMON_SOURCE_ARCHIVE" $RTEXTCOMMON_VERSION
 mavenizemodule $RTEXT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXT_VERSION/$RTEXT_SOURCE_ARCHIVE" $RTEXT_VERSION
 
+exit 0
 # build each module in dependency order and compare the maven-built jar to the official jar.
 # Fail fast if there are significant differences in any artifact.
 # depedency order is: rsyntaxtextarea, autocomplete, spellchecker, languagesuppport, rtext-common, rtext

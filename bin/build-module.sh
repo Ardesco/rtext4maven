@@ -6,26 +6,26 @@
 #
 
 function usage(){
-    echo -e "\nYou must specify a source folder and version e.g. './`basename $0` -f=<sourceFolder> -v=<sourceVersion>'"
+    echo -e "\nYou must specify a source folder and version e.g. './`basename $0` -f=<sourceFolder> -v=<sourceVersion> -o=<outputFolder>'"
     echo -e "\n*** Available Parameters ***\n"
-    echo -e "-f | --folder \t\t\t set the source folder"
-    echo -e "-v | --version \t\t\t set the source version\n"
-    echo -e "-c | --commitId \t\t\t set the git commit ID\n"
-    echo -e "-h | --help \t\t\t Show this help!"
+    echo -e "-f | --sourcefolder    \t\t\t Set the source folder"
+    echo -e "-v | --version         \t\t\t Set the source version"
+    echo -e "-o | --outputFolder    \t\t\t The projectfolder that output is stored in\n"
+    echo -e "-h | --help            \t\t\t Show this help!"
     exit 1
 }
 
 for _argument in "$@"
 do
     case ${_argument} in
-        -f=*|--folder=*)
+        -f=*|--sourcefolder=*)
         _sourceFolder="${_argument#*=}"
         ;;
         -v=*|--version=*)
         _sourceVersion="${_argument#*=}"
         ;;
-        -c|--commitId)
-        _gitCommitId=="${_argument#*=}"
+        -o=*|--outputFolder=*)
+        _outputFolder="${_argument#*=}"
         ;;
         -h|--help)
         usage
@@ -33,12 +33,10 @@ do
     esac
 done
 
-if [ "" == "$_sourceVersion" ] && ([ ! -f "$_sourceFolder" ] || [ ! -d "$_sourceFolder" ]); then
+if [ "" == "$_sourceVersion" ] || ([ ! -f "$_sourceFolder" ] && [ ! -d "$_sourceFolder" ]) || [ ! -d "$_outputFolder" ]; then
  	usage
 	exit 1
 fi
-
-echo "Mavenizing using source jar/folder ( $_sourceFolder ) with source version ( $_sourceVersion )"
 
 targetFolder=src
 mainJavaFolder=$targetFolder/main/java
@@ -57,7 +55,7 @@ function replaceVersionPlaceHolder {
 	fi
 }
 
-if [ -f "$sourceFolder" ]; then
+if [ -f "$_sourceFolder" ]; then
     # We have a source artifact instead of a source folder.  So we need to extract it into a tmp
     # directory and assign the sourceFolder variable to that tmp directory.
     artifactFilename=`basename ${_sourceFolder}`
@@ -92,9 +90,10 @@ if [ -f "$sourceFolder" ]; then
         fi
     fi
     popd > /dev/null
-    _sourceFolder=${artifactFilename}.tmp
+    _sourceFolder=`pwd`/${artifactFilename}.tmp
 fi
 
+pushd ${_outputFolder} > /dev/null
 sed -i "" "s/@VERSION@/${_sourceVersion}/" pom.xml
 
 replaceVersionPlaceHolder "RSYNTAXTEXTAREAVERSION" $RSYNTAXTEXTAREA_VERSION
@@ -112,8 +111,9 @@ mkdir -p "$mainJavaFolder"
 mkdir -p "$mainResourcesFolder"
 
 # Copy main classes and resources
-cp -r "$_sourceFolder/src/org" "$mainJavaFolder"
-cp -r "$_sourceFolder/src/org" "$mainResourcesFolder"
+cp -R "$_sourceFolder/src/org" "$mainJavaFolder"
+cp -R "$_sourceFolder/src/org" "$mainResourcesFolder"
+
 find "$mainJavaFolder" -type f -not -name "*.java" -delete
 find "$mainResourcesFolder" -type f -name "*.java" -delete
 find "$mainResourcesFolder" -type f -name "*.flex" -delete
@@ -173,5 +173,5 @@ if [ -d "$_sourceFolder/data" ]; then
 	mkdir "$mainResourcesFolder/data"
 	cp  $_sourceFolder/data/*.xml "$mainResourcesFolder/data"
 fi
-
+popd > /dev/null
 exit 0
