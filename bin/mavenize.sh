@@ -27,16 +27,6 @@
 # Where most importantly, you will need to have a working 1.4 compiler executable specified as the value for javac14-compiler-executable 
 #
 
-#TODO testing purposes remove these when complete
-export RSYNTAXTEXTAREA_VERSION=2.5.1
-export AUTOCOMPLETE_VERSION=2.5.1
-export SPELLCHECKER_VERSION=2.5.1
-export RSTA_UI_VERSION=2.5.1
-export RTEXT_VERSION=2.0.7
-export RTEXTCOMMON_VERSION=2.0.7
-export LANGUAGESUPPORT_VERSION=2.5.1
-
-
 function usage(){
     echo -e "\nYou must specify a git revision e.g. './`basename $0` -r=8324c615b702e5dab0b3979a4fb3639a7c17bbdb'"
     echo -e "\n*** Available Parameters ***\n"
@@ -166,8 +156,6 @@ function mavenizemodule() {
     projVersion=$3
 
     echo "Mavenizing module: `basename ${projDir}` ${projVersion}"
-    echo "build-module.sh -f=$sourceDirOrJar -v=$projVersion -o=$projDir"
-    echo " "
 
     /bin/bash $BIN_DIR/build-module.sh -f=$sourceDirOrJar -v=$projVersion -o=$projDir
     if [ "$?" -ne "0" ]; then
@@ -279,11 +267,10 @@ mavenizemodule $RSYNTAXTEXTAREA_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RSYNTAXTEXTAREA_
 mavenizemodule $AUTOCOMPLETE_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$AUTOCOMPLETE_VERSION/$AUTOCOMPLETE_SOURCE_ARCHIVE" $AUTOCOMPLETE_VERSION
 mavenizemodule $SPELLCHECKER_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$SPELLCHECKER_VERSION/$SPELLCHECKER_SOURCE_ARCHIVE" $SPELLCHECKER_VERSION
 mavenizemodule $RSTA_UI_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RSTA_UI_VERSION/$RSTA_UI_SOURCE_ARCHIVE" $RSTA_UI_VERSION
-mavenizemodule $LANGUAGESUPPORT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/language-support/$LANGUAGESUPPORT_VERSION" "r${LANGUAGESUPPORT_VERSION}"
+mavenizemodule $LANGUAGESUPPORT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$LANGUAGESUPPORT_VERSION/$LANGUAGESUPPORT_SOURCE_ARCHIVE" "${LANGUAGESUPPORT_VERSION}"
 mavenizemodule $COMMON_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXTCOMMON_VERSION/$COMMON_SOURCE_ARCHIVE" $RTEXTCOMMON_VERSION
 mavenizemodule $RTEXT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXT_VERSION/$RTEXT_SOURCE_ARCHIVE" $RTEXT_VERSION
 
-exit 0
 # build each module in dependency order and compare the maven-built jar to the official jar.
 # Fail fast if there are significant differences in any artifact.
 # depedency order is: rsyntaxtextarea, autocomplete, spellchecker, languagesuppport, rtext-common, rtext
@@ -301,6 +288,7 @@ mvn clean source:jar javadoc:jar install
 /bin/bash $BIN_DIR/prepare-bundle.sh $ICONGROUPS_PROJ_DIR/target
 
 
+#TODO decide what to do about comparisons
 #compj $AUTOCOMPLETE_PROJ_DIR/target/autocomplete-${AUTOCOMPLETE_VERSION}.jar $OFFICIAL_COMPILED_DIR/$AUTOCOMPLETE_VERSION/autocomplete.jar
 #compj $RSYNTAXTEXTAREA_PROJ_DIR/target/rsyntaxtextarea-${RSYNTAXTEXTAREA_VERSION}.jar  $OFFICIAL_COMPILED_DIR/$RSYNTAXTEXTAREA_VERSION/rsyntaxtextarea.jar
 #compj $SPELLCHECKER_PROJ_DIR/target/spellchecker-${SPELLCHECKER_VERSION}.jar $OFFICIAL_COMPILED_DIR/$SPELLCHECKER_VERSION/rsta_spellchecker.jar
@@ -309,15 +297,5 @@ mvn clean source:jar javadoc:jar install
 #compj $COMMON_PROJ_DIR/target/common-${RTEXTCOMMON_VERSION}.jar $OFFICIAL_COMPILED_DIR/$RTEXTCOMMON_VERSION/rtext/fife.common.jar
 #compj $LANGUAGESUPPORT_PROJ_DIR/target/languagesupport-r${LANGUAGESUPPORT_VERSION}.jar $OFFICIAL_COMPILED_DIR/$RTEXTCOMMON_VERSION/rtext/plugins/language_support.jar
 ##compj $ICONGROUPS_PROJ_DIR/target/
-
-echo "To use meld, execute the following commands (The official released jar is the one without a version): "
-
-echo "meld /tmp/autocomplete-${AUTOCOMPLETE_VERSION}.jar.extracted /tmp/autocomplete.jar.extracted"
-echo "meld /tmp/rsyntaxtextarea-${RSYNTAXTEXTAREA_VERSION}.jar.extracted  /tmp/rsyntaxtextarea.jar.extracted"
-echo "meld /tmp/spellchecker-${SPELLCHECKER_VERSION}.jar.extracted /tmp/rsta_spellchecker.jar.extracted"
-echo "meld /tmp/rstaui-${RSTA_UI_VERSION}.jar.extracted /tmp/rstaui.jar.extracted"
-echo "meld /tmp/rtext-${RTEXT_VERSION}.jar.extracted /tmp/RText.jar.extracted"
-echo "meld /tmp/common-${RTEXTCOMMON_VERSION}.jar.extracted /tmp/fife.common.jar.extracted"
-echo "meld /tmp/languagesupport-r${LANGUAGESUPPORT_VERSION}.jar.extracted /tmp/language_support.jar.extracted"
 
 exit 0
