@@ -278,14 +278,14 @@ mavenizemodule $RTEXT_PROJ_DIR "$OFFICIAL_SOURCE_DIR/$RTEXT_VERSION/$RTEXT_SOURC
 cd ${OUTPUT_DIR}
 mvn clean source:jar javadoc:jar install
 
-/bin/bash $BIN_DIR/prepare-bundle.sh $RSYNTAXTEXTAREA_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $AUTOCOMPLETE_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $SPELLCHECKER_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $RSTA_UI_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $LANGUAGESUPPORT_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $COMMON_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $RTEXT_PROJ_DIR/target
-/bin/bash $BIN_DIR/prepare-bundle.sh $ICONGROUPS_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$RSYNTAXTEXTAREA_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$AUTOCOMPLETE_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$SPELLCHECKER_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$RSTA_UI_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$LANGUAGESUPPORT_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$COMMON_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$RTEXT_PROJ_DIR/target
+/bin/bash $BIN_DIR/prepare-bundle.sh -t=$ICONGROUPS_PROJ_DIR/target
 
 
 #TODO decide what to do about comparisons
