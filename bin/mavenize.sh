@@ -28,17 +28,18 @@
 #
 
 function usage(){
-    echo -e "\nYou must specify a git revision e.g. './`basename $0` -r=8324c615b702e5dab0b3979a4fb3639a7c17bbdb'"
+    echo -e "\nIf there is a GPGPASSPHRASE ENV variable, you don't need to specify --gpgpassphrase'"
+    echo -e "All other parameters *MUST* be specified.'"
     echo -e "\n*** Available Parameters ***\n"
-    echo -e "--rsyntaxarea \t\t\t set the rsyntaxarea version"
-    echo -e "--autocomplete \t\t\t set the autocomplete version"
-    echo -e "--spellchecker \t\t\t set the spellchecker version"
-    echo -e "--rstaui \t\t\t set the rsta_ui version"
-    echo -e "--rtext \t\t\t set the rtext version"
-    echo -e "--rtextcommon \t\t\t set the rtextcommon version"
-    echo -e "--languagesupport \t\t\t set the rsta language support version"
-    echo -e "--gpgpassphrase \t\t\t set the gpgpassphrase used to sign the packages that are created\n"
-    echo -e "-h | --help \t\t\t Show this help!"
+    echo -e "--rsyntaxarea      \t\t\t set the rsyntaxarea version"
+    echo -e "--autocomplete     \t\t\t set the autocomplete version"
+    echo -e "--spellchecker     \t\t\t set the spellchecker version"
+    echo -e "--rstaui           \t\t\t set the rsta_ui version"
+    echo -e "--rtext            \t\t\t set the rtext version"
+    echo -e "--rtextcommon      \t\t\t set the rtextcommon version"
+    echo -e "--languagesupport  \t\t\t set the rsta language support version \n"
+    echo -e "--gpgpassphrase    \t\t\t set the gpgpassphrase used to sign the packages that are created"
+    echo -e "-h | --help        \t\t\t Show this help!"
     exit 1
 }
 
@@ -67,7 +68,7 @@ do
         LANGUAGESUPPORT_VERSION="${_argument#*=}"
         ;;
         --gpgpassphrase=*)
-        GPGPASSPHRASE="${_argument#*=}"
+        export GPGPASSPHRASE="${_argument#*=}"
         ;;
         -h|--help)
         usage
@@ -77,10 +78,58 @@ done
 
 if [ "" == "$GPGPASSPHRASE" ]; then
 	echo "Environment variable GPGPASSPHRASE must be defined"
+	usage
 	exit 1
 fi
 
-#TODO check that versions have been set via command line
+if [ "" == "$RSYNTAXTEXTAREA_VERSION" ]; then
+    echo " "
+	echo "rsyntaxarea version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$AUTOCOMPLETE_VERSION" ]; then
+    echo " "
+	echo "autocomplete version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$SPELLCHECKER_VERSION" ]; then
+    echo " "
+	echo "spellchecker version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$RSTA_UI_VERSION" ]; then
+    echo " "
+	echo "rsta ui version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$RTEXT_VERSION" ]; then
+    echo " "
+	echo "rtext  version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$RTEXTCOMMON_VERSION" ]; then
+    echo " "
+	echo "rtext common version must be defined"
+	usage
+	exit 1
+fi
+
+if [ "" == "$LANGUAGESUPPORT_VERSION" ]; then
+    echo " "
+	echo "Language support version must be defined"
+	usage
+	exit 1
+fi
 
 #TODO FUTURE allow release of some components and not all?
 
