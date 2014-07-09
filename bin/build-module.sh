@@ -33,7 +33,19 @@ do
     esac
 done
 
-if [ "" == "$_sourceVersion" ] || ([ ! -f "$_sourceFolder" ] && [ ! -d "$_sourceFolder" ]) || [ ! -d "$_outputFolder" ]; then
+if [ "" == "$_sourceVersion" ] || [ "" == "$_sourceFolder" ] || [ "" == "$_outputFolder" ]; then
+ 	usage
+	exit 1
+fi
+
+if [ ! -f "$_sourceFolder" ] && [ ! -d "$_sourceFolder" ]; then
+    echo "Source folder supplied is not a file, or a directory!"
+ 	usage
+	exit 1
+fi
+
+if [ ! -d "$_outputFolder" ]; then
+    echo "Output folder supplied is not a directory!"
  	usage
 	exit 1
 fi
@@ -48,9 +60,7 @@ function replaceVersionPlaceHolder {
 	placeHolderPattern=$1
     placeHolderVersion=$2
 	foundPlaceHolderVersion=`grep $placeHolderPattern pom.xml  | wc -l`
-	#echo "foundPlaceHolderVersion: $foundPlaceHolderVersion"
 	if [ "$foundPlaceHolderVersion" -gt "0" ]; then
-		#read -p "What value for the $placeHolderPattern dependency version should be used? " placeHolderVersion
 		sed -i "" "s/@${placeHolderPattern}@/${placeHolderVersion}/" pom.xml
 	fi
 }
@@ -81,12 +91,12 @@ if [ -f "$_sourceFolder" ]; then
             echo "Removing common artifact source files (keeping RText source files)"
             rm -rf Common
             mv RText/* .
-            rmdir RText
+            rm -rf RText
         else
             echo "Removing rtext artifact source files (keeping Common source files)"
             rm -rf RText
             mv Common/* .
-            rmdir Common
+            rm -rf Common
         fi
     fi
     popd > /dev/null
@@ -94,6 +104,8 @@ if [ -f "$_sourceFolder" ]; then
 fi
 
 pushd ${_outputFolder} > /dev/null
+
+#TODO use the replaceVersionPlaceHolder for below line?
 sed -i "" "s/@VERSION@/${_sourceVersion}/" pom.xml
 
 replaceVersionPlaceHolder "RSYNTAXTEXTAREAVERSION" $RSYNTAXTEXTAREA_VERSION
@@ -153,7 +165,7 @@ if [ -d "$_sourceFolder/test" ]; then
 	mkdir -p "$testResourcesFolder"
 	cp -r "$_sourceFolder/test/org" "$testJavaFolder"
 	cp -r "$_sourceFolder/test/org" "$testResourcesFolder"
-	find "$testJavaFolder" -type f | grep -v "\.java" -delete
+	find "$testJavaFolder" -type f -not -name "*.java" -delete
 	find "$testResourcesFolder" -type f -name "*.java" -delete
 fi
 
@@ -165,6 +177,7 @@ fi
 
 # This is a hack to fix a test in the languagesupport module
 if [ -f "./src/test/java/org/fife/rsta/ac/java/rjc/parser/ClassAndLocalVariablesTest.java" ]; then
+echo "Language support hack engaged! (Somebody should really fix that failing test...)"
 	sed -i "" "s!res/tests/SimpleClass.java!src/test/resources/res/tests/SimpleClass.java!" "./src/test/java/org/fife/rsta/ac/java/rjc/parser/ClassAndLocalVariablesTest.java"
 fi
 
